@@ -10,16 +10,26 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:customasm-vscode.helloWorld"
+    "onCommand:customasm-vscode.compile"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "customasm-vscode.helloWorld",
-        "title": "Hello World"
+        "command": "customasm-vscode.compile",
+        "title": "Compile with Customasm",
+        "category": "Assembly"
       }
-    ]
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "customasm-vscode.compile",
+          "when": "editorLangId == asm-intel-x86-generic",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
