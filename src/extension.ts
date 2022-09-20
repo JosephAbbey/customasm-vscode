@@ -192,7 +192,7 @@ export function activate(context: vscode.ExtensionContext) {
                     panel.webview.html = `<!DOCTYPE html>
                         <html lang="en">
                             <head>
-                                <title>customasm-vscode</title>
+                                <title>customasm</title>
                                 <meta charset="utf-8">
                                 <style>
                                     #output {
