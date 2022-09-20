@@ -1,8 +1,14 @@
 {
-  "name": "customasm-vscode",
+  "name": "customasm",
   "displayName": "customasm",
+  "author": {
+    "name": "JosephAbbey",
+    "email": "joseph@abbey1.org.uk",
+    "url": "https://joseph.abbey1.org.uk"
+  },
+  "publisher": "JosephAbbey",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.13.3",
   "engines": {
     "vscode": "^1.71.0"
   },
@@ -10,7 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:customasm-vscode.compile"
+    "onCommand:customasm.compile"
   ],
   "repository": {
     "type": "git",
@@ -20,7 +26,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "customasm-vscode.compile",
+        "command": "customasm.compile",
         "title": "Compile with Customasm",
         "category": "Assembly"
       }
@@ -28,7 +34,7 @@
     "menus": {
       "editor/title": [
         {
-          "command": "customasm-vscode.compile",
+          "command": "customasm.compile",
           "when": "editorLangId == asm-intel-x86-generic",
           "group": "navigation"
         }

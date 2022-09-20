@@ -122,7 +122,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     let disposable = vscode.commands.registerTextEditorCommand(
-        'customasm-vscode.compile',
+        'customasm.compile',
         (editor) => {
             vscode.window
                 .showQuickPick(
