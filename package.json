@@ -12,6 +12,10 @@
   "activationEvents": [
     "onCommand:customasm-vscode.compile"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josephabbey/customasm-vscode"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
