@@ -35,11 +35,19 @@
       "editor/title": [
         {
           "command": "customasm.compile",
-          "when": "editorLangId == asm-intel-x86-generic",
+          "when": "editorLangId == asm || editorLangId == asm-intel-x86-generic",
           "group": "navigation"
         }
       ]
-    }
+    },
+    "languages": [
+      {
+        "id": "asm",
+        "extensions": [
+          ".asm"
+        ]
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
