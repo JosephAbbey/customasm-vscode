@@ -42,7 +42,7 @@
     },
     "languages": [
       {
-        "id": "asm",
+        "id": "asm-intel-x86-generic",
         "extensions": [
           ".asm"
         ]
