@@ -174,6 +174,7 @@ export function activate(context: vscode.ExtensionContext) {
             // If the customasm cli is on the path, use it.
             assemble = (document: vscode.TextDocument, format: string) => {
                 document.save();
+                // TODO: Fix colourisation
                 return cp.execSync(
                     `${exe} ${document.uri.fsPath} -f ${
                         {
