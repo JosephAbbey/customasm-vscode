@@ -7,7 +7,7 @@ import cp = require('child_process');
  * @param {string} exe executable name (without extension if on Windows)
  * @return {Promise<string|null>} executable path if found
  * */
-async function findExecutable(exe) {
+async function findExecutable(exe: string): Promise<string | null> {
     const envPath = process.env.PATH || '';
     const envExt = process.env.PATHEXT || '';
     const pathDirs = envPath
@@ -24,8 +24,16 @@ async function findExecutable(exe) {
         return null;
     }
 
-    async function checkFileExists(filePath) {
-        if ((await fs.stat(filePath)).isFile()) {
+    async function checkFileExists(filePath: string) {
+        if (
+            (
+                await new Promise<fs.Stats>((resolve, reject) =>
+                    fs.stat(filePath, (err, stats) =>
+                        err ? reject(err) : resolve(stats)
+                    )
+                )
+            ).isFile()
+        ) {
             return filePath;
         }
         throw new Error('Not a file');
@@ -37,6 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
         document: vscode.TextDocument,
         format: string
     ) => string = () => '';
+
     findExecutable('customasm').then((exe) => {
         if (exe === null) {
             let WASM: WebAssembly.WebAssemblyInstantiatedSource | null = null;
@@ -93,7 +102,6 @@ export function activate(context: vscode.ExtensionContext) {
                 //@ts-expect-error
                 WASM?.instance.exports.wasm_string_drop(outputPtr);
 
-                output = output.replace(/\n/g, '<br>');
                 output = output.replace(
                     / --> asm:\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
                     (_, line, column) =>
@@ -162,8 +170,8 @@ export function activate(context: vscode.ExtensionContext) {
 
                 let bytes = [];
                 for (let i = 0; i < len; i++) {
-                    //@ts-expect-error
                     bytes.push(
+                        //@ts-expect-error
                         WASM?.instance.exports.wasm_string_get_byte(ptr, i)
                     );
                 }
@@ -175,32 +183,105 @@ export function activate(context: vscode.ExtensionContext) {
             assemble = (document: vscode.TextDocument, format: string) => {
                 document.save();
                 // TODO: Fix colourisation
-                return cp.execSync(
-                    `${exe} ${document.uri.fsPath} -f ${
+                let output = cp.execSync(
+                    `customasm ${document.uri.fsPath} -f ${
                         {
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             Annotated: 'annotated',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Annotated Bin': 'annotatedbin',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Hex Dump': 'hexdump',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Bin Dump': 'bindump',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Hex String': 'hexstr',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Hex Line by Line': 'hexline',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Bin String': 'binstr',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Bin Line by Line': 'binline',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             COE: 'coe',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             MIF: 'mif',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'MIF BIN': 'mifbin',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Intel HEX': 'intelhex',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Comma-separated Dec': 'deccomma',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'Comma-separated Hex': 'hexcomma',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'C Dec Array': 'decc',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'C Hex Array': 'hexc',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'VHDL Bin Array': 'binvhdl',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'VHDL Hex Array': 'hexvhdl',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'LogiSim 8-bit': 'logisim8',
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'LogiSim 16-bit': 'logisim16',
                         }[format]
-                    } -p -q`
+                    } -p -q`,
+                    {
+                        encoding: 'utf-8',
+                    }
                 );
+                output = output.replace(
+                    / --> asm:\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
+                    (_, line, column) =>
+                        ` --> asm:<button class="a" onclick="window.goto(${
+                            line - 1
+                        },${column - 1})">${line}:${column}</button>`
+                );
+
+                output = output.replace(
+                    / --> asm:\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
+                    (_, line, column) =>
+                        ` --> asm:<button class="a" onclick="window.goto(${
+                            line - 1
+                        },${column - 1})">${line}:${column}</button>`
+                );
+                output = output.replace(
+                    /\x1b\[90m/g,
+                    "</span><span style='color:var(--vscode-disabledForeground);'>"
+                );
+                output = output.replace(
+                    /\x1b\[91m/g,
+                    "</span><span style='color:var(--vscode-errorForeground);'>"
+                );
+                output = output.replace(
+                    /\x1b\[93m/g,
+                    "</span><span style='color:#f80;'>"
+                );
+                output = output.replace(
+                    /\x1b\[96m/g,
+                    "</span><span style='color:#08f;'>"
+                );
+                output = output.replace(
+                    /\x1b\[97m/g,
+                    "</span><span style='color:var(--vscode-foreground);'>"
+                );
+                output = output.replace(
+                    /\x1b\[1m/g,
+                    "</span><span style='font-weight:bold;'>"
+                );
+                output = output.replace(
+                    /\x1b\[0m/g,
+                    "</span><span style='color:var(--vscode-foreground);'>"
+                );
+
+                output =
+                    "<span style='color:var(--vscode-foreground);'>" +
+                    output +
+                    '</span>';
+
+                return output;
             };
         }
 
