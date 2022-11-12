@@ -8,7 +8,7 @@
   },
   "publisher": "JosephAbbey",
   "description": "",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "engines": {
     "vscode": "^1.71.0"
   },
@@ -35,14 +35,14 @@
       "editor/title": [
         {
           "command": "customasm.compile",
-          "when": "editorLangId == asm || editorLangId == asm-intel-x86-generic",
+          "when": "editorLangId == customasm",
           "group": "navigation"
         }
       ]
     },
     "languages": [
       {
-        "id": "asm-intel-x86-generic",
+        "id": "customasm",
         "extensions": [
           ".asm"
         ]
