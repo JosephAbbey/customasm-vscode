@@ -225,7 +225,9 @@ export function activate(context: vscode.ExtensionContext) {
             }
           );
         } catch (e) {
+          //@ts-expect-error
           console.log({ ...e });
+          //@ts-expect-error
           output = e.stdout;
         }
 
